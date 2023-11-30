@@ -124,7 +124,7 @@ def rescale_zero_terminal_snr(betas: torch.FloatTensor) -> torch.FloatTensor:
     # Convert alphas_bar_sqrt to betas
     alphas_bar = alphas_bar_sqrt**2  # Revert sqrt
     alphas = alphas_bar[1:] / alphas_bar[:-1]  # Revert cumprod
-    alphas = torch.cat([alphas_bar[0:1], alphas])
+    alphas = torch.cat([alphas_bar[:1], alphas])
     betas = 1 - alphas
 
     return betas
@@ -572,8 +572,7 @@ class LCMScheduler(SchedulerMixin, ConfigMixin):
         while len(sigma.shape) < len(original_samples.shape):
             sigma = sigma.unsqueeze(-1)
 
-        noisy_samples = original_samples + noise * sigma
-        return noisy_samples
+        return original_samples + noise * sigma
 
     def __len__(self):
         return self.config.num_train_timesteps
